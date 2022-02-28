@@ -9,19 +9,12 @@ const paths = {
 }
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: [paths.src + '/index.js'],
   output: {
     path: paths.build,
     filename: '[name].bundle.js',
     publicPath: '/'
-  },
-  devServer: {
-    historyApiFallback: true,
-    open: true,
-    compress: true,
-    hot: true,
-    port: 8080
   },
   module: {
     rules: [

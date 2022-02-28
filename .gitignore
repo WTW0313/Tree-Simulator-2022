@@ -26,6 +26,7 @@
 
 node_modules
 dist
-yarn-error.log
-yarn.lock
-/yarn.lock
+*.log
+npm-debug.log*
+.env
+.DS_Store
