@@ -70,7 +70,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: paths.src + '/index.html',
       title: 'Tree Simulator',
-      favicon: paths.src + '/image/favicon.svg',
+      favicon: paths.src + '/image/favicon.ico',
       filename: 'index.html'
     }),
     new StylelintPlugin()

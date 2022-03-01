@@ -1,8 +1,6 @@
 import leaf_1 from '@/image/leaf-1.png';
 import leaf_2 from '@/image/leaf-2.png';
 
-export { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree };
-
 /**
  * @description Branch
  * @class
@@ -148,6 +146,8 @@ class BranchCollection {
 
   /**
    * @description Draw every branch in collection
+   * @param {DieBranches} oldBranches
+   * @param {BranchCollection} branches
    */
   process(oldBranches, branches) {
     for (const b in this.branches) {
@@ -170,6 +170,7 @@ class BranchCollection {
 
 /**
  * @description DieBranches
+ * @class
  */
 class DieBranches {
   /**
@@ -262,8 +263,8 @@ function pointsGenerator(oldBranches, branches) {
 /**
  * Draw the tree.
  * @function
- * @param {number} progress The number of points that have been painted
- * @param {number} cnt The number of leaf points
+ * @param {number} progress The number of points painted
+ * @param {number} cnt The number of leaf points painted
  * @param {number} growspeed The speed of growth
  * @param {DieBranches} oldBranches
  * @param {CanvasRenderingContext2D} ctxTrunk
@@ -278,7 +279,7 @@ function drawTree(progress, cnt, growspeed, oldBranches, ctxTrunk, ctxLeaf) {
     if (oldBranches.oldBranchesTag[progress] === 'trunk') {
       drawTrunk(progress, oldBranches, ctxTrunk);
     } else if (oldBranches.oldBranchesTag[progress] === 'leaf') {
-      drawLeaf(cnt, progress, dead, oldBranches, ctxLeaf);
+      drawLeaf(progress, cnt, dead, oldBranches, ctxLeaf);
       cnt++;
     }
     progress = progress + 1;
@@ -287,7 +288,7 @@ function drawTree(progress, cnt, growspeed, oldBranches, ctxTrunk, ctxLeaf) {
 
 /**
  * @description Draw a trunk point
- * @param {number} progress
+ * @param {number} progress The number of points painted
  * @param {DieBranches} oldBranches
  * @param {CanvasRenderingContext2D} ctx
  */
@@ -308,13 +309,13 @@ function drawTrunk(progress, oldBranches, ctx) {
 
 /**
  * @description Draw a leaf
- * @param {number} cnt
- * @param {number} progress
+ * @param {number} progress The number of points painted
+ * @param {number} cnt The number of leaf points painted
  * @param {number} dead Draw a leaf every 'dead' points
  * @param {DieBranches} oldBranches
  * @param {CanvasRenderingContext2D} ctx
  */
-function drawLeaf(cnt, progress, dead, oldBranches, ctx) {
+function drawLeaf(progress, cnt, dead, oldBranches, ctx) {
   if (cnt % dead === 0 && cnt > 200) {
     let leaf = new Image();
     const p = Math.random() * 3;
@@ -336,3 +337,5 @@ function drawLeaf(cnt, progress, dead, oldBranches, ctx) {
     };
   }
 }
+
+export { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree };
