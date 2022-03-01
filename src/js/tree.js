@@ -1,5 +1,5 @@
-import leaf_1 from '../image/leaf-1.png';
-import leaf_2 from '../image/leaf-2.png';
+import leaf_1 from '@/image/leaf-1.png';
+import leaf_2 from '@/image/leaf-2.png';
 
 export { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree };
 
@@ -43,7 +43,7 @@ class Branch {
   }
 
   /**
-   * @description Draw a branch point
+   * @description Draw one branch point
    * @param {CanvasRenderingContext2D} ctx Canvas Rendering Context 2D
    */
   draw(ctx) {
@@ -67,7 +67,7 @@ class Branch {
     oldBranches.addX(this.x + 20 * p * Math.cos(theta * p));
     oldBranches.addY(this.y - 20 * p * Math.sin(theta * p));
     oldBranches.addR(4);
-    oldBranches.addCate('leaf');
+    oldBranches.addTag('leaf');
   }
 
   /**
@@ -89,7 +89,7 @@ class Branch {
     oldBranches.addX(this.x);
     oldBranches.addY(this.y);
     oldBranches.addR(this.radius);
-    oldBranches.addCate('trunk');
+    oldBranches.addTag('trunk');
   }
 
   /**
@@ -98,19 +98,16 @@ class Branch {
    */
   split(branches) {
     let splitChance = 0;
-    if (this.generation === 1)
+    if (this.generation === 1) {
       splitChance = this.distance / window.innerHeight - 0.2;
-    else if (this.generation < 3)
+    } else if (this.generation < 3) {
       splitChance = this.distance / window.innerHeight - 0.1;
+    }
     if (Math.random() < splitChance) {
-      let n = 2 + Math.round(Math.random() * 3);
+      const n = 2 + Math.round(Math.random() * 3);
       for (let i = 0; i < n; i++) {
-        let branch = new Branch(this.x, this.y, this.speed, this.radius, this.angle, this.generation + 1);
-        // branch.x = this.x;
-        // branch.y = this.y;
-        // branch.angle = this.angle;
-        // branch.radius = this.radius * 0.9;
-        // branch.generation++;
+        const branch = new Branch(this.x, this.y, this.speed, this.radius,
+          this.angle, this.generation + 1, this.distance);
         branches.add(branch);
       }
       branches.remove(this);
@@ -164,8 +161,9 @@ class BranchCollection {
    */
   remove(branch) {
     for (const b in this.branches) {
-      if (this.branches[b] === branch)
+      if (this.branches[b] === branch) {
         this.branches.splice(b, 1);
+      }
     }
   }
 }
@@ -179,13 +177,13 @@ class DieBranches {
    * @param {number[]} oldBranchesX An array of the x-coordinate of the branch points
    * @param {number[]} oldBranchesY An array of the y-coordinate of the branch points
    * @param {number[]} oldBranchesR An array of the radius of the branch points
-   * @param {number[]} oldBranchesCategory An array of the category of the branch points
+   * @param {string[]} oldBranchesTag An array of the category of the branch points
    */
-  constructor(oldBranchesX = [], oldBranchesY = [], oldBranchesR = [], oldBranchesCategory = []) {
+  constructor(oldBranchesX = [], oldBranchesY = [], oldBranchesR = [], oldBranchesTag = []) {
     this.oldBranchesX = oldBranchesX;
     this.oldBranchesY = oldBranchesY;
     this.oldBranchesR = oldBranchesR;
-    this.oldBranchesCategory = oldBranchesCategory;
+    this.oldBranchesTag = oldBranchesTag;
   }
 
   /**
@@ -213,11 +211,11 @@ class DieBranches {
   }
 
   /**
-   * @description Add category
-   * @param {string} category
+   * @description Add tag
+   * @param {string} tag
    */
-  addCate(category) {
-    this.oldBranchesCategory.push(category);
+  addTag(tag) {
+    this.oldBranchesTag.push(tag);
   }
 
   /**
@@ -274,40 +272,62 @@ function drawTree(progress, cnt, growspeed, oldBranches, ctx) {
     if (progress === oldBranches.oldBranchesX.length) {
       clearInterval(timer);
     }
-    if (oldBranches.oldBranchesCategory[progress] === 'trunk') {
-      ctx.fillStyle = '#946A2C';
-      ctx.beginPath();
-      ctx.moveTo(oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress]);
-      ctx.arc(
-        oldBranches.oldBranchesX[progress],
-        oldBranches.oldBranchesY[progress],
-        oldBranches.oldBranchesR[progress],
-        0, 2*Math.PI, true);
-      ctx.closePath();
-      ctx.fill();
-    } else if (oldBranches.oldBranchesCategory[progress] === 'leaf') {
-      if (cnt % dead === 0 && cnt > 200) {
-        let leaf = new Image();
-        const p = Math.random() * 3;
-        let k = 0;
-        if (p < 1) {
-          leaf.src = leaf_1;
-          k = 1;
-        } else if (p < 2) {
-          oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 20;
-          leaf.src = leaf_2;
-          k = 2;
-        } else if (p < 3) {
-          oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 10;
-          leaf.src = leaf_1;
-          k = 2;
-        }
-        leaf.onload = () => {
-          ctx.drawImage(leaf, oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress], 10 * k, 10 * k);
-        };
-      }
+    if (oldBranches.oldBranchesTag[progress] === 'trunk') {
+      drawTrunk(progress, oldBranches, ctx);
+    } else if (oldBranches.oldBranchesTag[progress] === 'leaf') {
+      drawLeaf(cnt, progress, dead, oldBranches, ctx);
       cnt++;
     }
     progress = progress + 1;
   }, growspeed);
+}
+
+/**
+ * @description Draw a trunk point
+ * @param {number} progress
+ * @param {DieBranches} oldBranches
+ * @param {CanvasRenderingContext2D} ctx
+ */
+function drawTrunk(progress, oldBranches, ctx) {
+  ctx.fillStyle = '#946A2C';
+  ctx.beginPath();
+  ctx.moveTo(oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress]);
+  ctx.arc(
+    oldBranches.oldBranchesX[progress],
+    oldBranches.oldBranchesY[progress],
+    oldBranches.oldBranchesR[progress],
+    0, 2 * Math.PI, true);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/**
+ * @description Draw a leaf
+ * @param {number} cnt
+ * @param {number} progress
+ * @param {number} dead Draw a leaf every 'dead' points
+ * @param {DieBranches} oldBranches
+ * @param {CanvasRenderingContext2D} ctx
+ */
+function drawLeaf(cnt, progress, dead, oldBranches, ctx) {
+  if (cnt % dead === 0 && cnt > 200) {
+    let leaf = new Image();
+    const p = Math.random() * 3;
+    let k = 0;
+    if (p < 1) {
+      leaf.src = leaf_1;
+      k = 1;
+    } else if (p < 2) {
+      oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 20;
+      leaf.src = leaf_2;
+      k = 2;
+    } else if (p < 3) {
+      oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 10;
+      leaf.src = leaf_1;
+      k = 2;
+    }
+    leaf.onload = () => {
+      ctx.drawImage(leaf, oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress], 10 * k, 10 * k);
+    };
+  }
 }

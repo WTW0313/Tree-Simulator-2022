@@ -1,9 +1,13 @@
 import '@/styles/main.scss';
+import { createCanvas } from '@/js/canvas';
 import { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree } from '@/js/tree';
 
 // Branches
 const branches = new BranchCollection();
 const oldBranches = new DieBranches();
+
+// Canvases
+let treeCanvas;
 
 window.addEventListener('load', init);
 
@@ -13,28 +17,14 @@ window.addEventListener('load', init);
 function init() {
   const app = document.getElementById('root');
   app.className = 'app';
-  const canvas = createCanvas(window.innerWidth, window.innerHeight, app, 'tree-canvas');
-  initialBranch(branches, canvas);
+  // Create Canvas
+  treeCanvas = createCanvas(window.innerWidth, window.innerHeight, app, 'tree-canvas');
+
+  // Initiate tree points
+  initialBranch(branches, treeCanvas);
   pointsGenerator(oldBranches, branches);
-  console.log(branches);
-  console.log(oldBranches);
-  const ctx = canvas.getContext('2d');
+
+  // Draw the tree
+  const ctx = treeCanvas.getContext('2d');
   drawTree(0, 0, 10, oldBranches, ctx);
-}
-
-
-/**
- * @description Create a new Canvas
- * @param {number} width width of canvas
- * @param {number} height height of canvas
- * @param {HTMLElement} parent the element that canvas
- * @param {string} className
- */
-function createCanvas(width, height, parent, className) {
-  const canvas = document.createElement('canvas');
-  canvas.className = className;
-  canvas.width = width;
-  canvas.height = height;
-  parent.appendChild(canvas);
-  return canvas;
 }
