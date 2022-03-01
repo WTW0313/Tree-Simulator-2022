@@ -252,12 +252,9 @@ function initialBranch(branches, canvas) {
  * @param {BranchCollection} branches
  */
 function pointsGenerator(oldBranches, branches) {
-  let timer = setInterval(() => {
+  while (branches.branches.length) {
     branches.process(oldBranches, branches);
-    if (branches.branches.length === 0) {
-      clearInterval(timer);
-    }
-  }, 10);
+  }
 }
 
 /**
@@ -265,17 +262,13 @@ function pointsGenerator(oldBranches, branches) {
  * @function
  * @param {number} progress The number of points painted
  * @param {number} cnt The number of leaf points painted
- * @param {number} growspeed The speed of growth
  * @param {DieBranches} oldBranches
  * @param {CanvasRenderingContext2D} ctxTrunk
  * @param {CanvasRenderingContext2D} ctxLeaf
  */
-function drawTree(progress, cnt, growspeed, oldBranches, ctxTrunk, ctxLeaf) {
+function drawTree(progress, cnt, oldBranches, ctxTrunk, ctxLeaf) {
   const dead = 5;
-  let timer = setInterval(() => {
-    if (progress === oldBranches.oldBranchesX.length) {
-      clearInterval(timer);
-    }
+  const animationTree = () => {
     if (oldBranches.oldBranchesTag[progress] === 'trunk') {
       drawTrunk(progress, oldBranches, ctxTrunk);
     } else if (oldBranches.oldBranchesTag[progress] === 'leaf') {
@@ -283,7 +276,11 @@ function drawTree(progress, cnt, growspeed, oldBranches, ctxTrunk, ctxLeaf) {
       cnt++;
     }
     progress = progress + 1;
-  }, growspeed);
+    if (progress !== oldBranches.oldBranchesX.length) {
+      requestAnimationFrame(animationTree);
+    }
+  };
+  requestAnimationFrame(animationTree);
 }
 
 /**

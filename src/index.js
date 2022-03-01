@@ -28,5 +28,5 @@ function init() {
   // Draw the tree
   const ctxTrunk = trunkCanvas.getContext('2d');
   const ctxLeaf = leafCanvas.getContext('2d');
-  drawTree(0, 0, 10, oldBranches, ctxTrunk, ctxLeaf);
+  drawTree(0, 0, oldBranches, ctxTrunk, ctxLeaf);
 }
