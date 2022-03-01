@@ -1,4 +1,4 @@
-.app {
+#app {
   position: absolute;
   top: 0;
   left: 0;
@@ -7,7 +7,20 @@
   margin: 0;
 }
 
-.tree-canvas {
+.trunk-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
   margin: 0;
   background-color: bisque;
+}
+
+.leaf-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  margin: 0;
+  background-color:rgba(255,255,255,0);
 }

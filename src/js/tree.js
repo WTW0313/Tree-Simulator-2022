@@ -265,17 +265,20 @@ function pointsGenerator(oldBranches, branches) {
  * @param {number} progress The number of points that have been painted
  * @param {number} cnt The number of leaf points
  * @param {number} growspeed The speed of growth
+ * @param {DieBranches} oldBranches
+ * @param {CanvasRenderingContext2D} ctxTrunk
+ * @param {CanvasRenderingContext2D} ctxLeaf
  */
-function drawTree(progress, cnt, growspeed, oldBranches, ctx) {
+function drawTree(progress, cnt, growspeed, oldBranches, ctxTrunk, ctxLeaf) {
   const dead = 5;
   let timer = setInterval(() => {
     if (progress === oldBranches.oldBranchesX.length) {
       clearInterval(timer);
     }
     if (oldBranches.oldBranchesTag[progress] === 'trunk') {
-      drawTrunk(progress, oldBranches, ctx);
+      drawTrunk(progress, oldBranches, ctxTrunk);
     } else if (oldBranches.oldBranchesTag[progress] === 'leaf') {
-      drawLeaf(cnt, progress, dead, oldBranches, ctx);
+      drawLeaf(cnt, progress, dead, oldBranches, ctxLeaf);
       cnt++;
     }
     progress = progress + 1;
@@ -290,6 +293,8 @@ function drawTree(progress, cnt, growspeed, oldBranches, ctx) {
  */
 function drawTrunk(progress, oldBranches, ctx) {
   ctx.fillStyle = '#946A2C';
+  ctx.shadowcolor = '#946A2C';
+  ctx.shadowBlur = 2;
   ctx.beginPath();
   ctx.moveTo(oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress]);
   ctx.arc(
