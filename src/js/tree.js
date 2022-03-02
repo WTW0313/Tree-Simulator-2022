@@ -33,7 +33,7 @@ class Branch {
    */
   process(oldBranches, branches) {
     if (this.generation > 0) {
-      this.drawPoints(oldBranches);
+      this.generateLeafPoints(oldBranches);
     }
     this.iterate(oldBranches);
     this.split(branches);
@@ -46,20 +46,17 @@ class Branch {
    */
   draw(ctx) {
     ctx.fillStyle = '#946A2C';
-    ctx.shadowcolor = '#946A2C';
-    ctx.shadowBlur = 2;
     ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
     ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
     ctx.closePath();
     ctx.fill();
   }
 
   /**
-   * @description Draw a leaf point and record the point
+   * @description Generate a new leaf point and record the point
    * @param {DieBranches} oldBranches
    */
-  drawPoints(oldBranches) {
+  generateLeafPoints(oldBranches) {
     const p = Math.random();
     const theta = Math.PI / 2;
     oldBranches.addX(this.x + 20 * p * Math.cos(theta * p));
@@ -145,7 +142,7 @@ class BranchCollection {
   }
 
   /**
-   * @description Draw every branch in collection
+   * @description Process every branch in collection
    * @param {DieBranches} oldBranches
    * @param {BranchCollection} branches
    */
@@ -268,7 +265,7 @@ function pointsGenerator(oldBranches, branches) {
  * @param {CanvasRenderingContext2D} ctxProgressBar
  */
 function drawTree(progress, cnt, oldBranches, ctxTrunk, ctxLeaf, ctxProgressBar) {
-  const dead = 20;
+  const dead = 10;
   let animationID = 0;
   const animationTree = () => {
     if (oldBranches.oldBranchesTag[progress] === 'trunk') {
@@ -318,15 +315,13 @@ function drawTreeWithoutAnimation(progress, cnt, oldBranches, ctxTrunk, ctxLeaf)
  */
 function drawTrunk(progress, oldBranches, ctx) {
   ctx.fillStyle = '#946A2C';
-  ctx.shadowcolor = '#946A2C';
-  ctx.shadowBlur = 2;
   ctx.beginPath();
-  ctx.moveTo(oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress]);
   ctx.arc(
     oldBranches.oldBranchesX[progress],
     oldBranches.oldBranchesY[progress],
     oldBranches.oldBranchesR[progress],
-    0, 2 * Math.PI, true);
+    0, 2 * Math.PI, true
+  );
   ctx.closePath();
   ctx.fill();
 }
@@ -357,7 +352,13 @@ function drawLeaf(progress, cnt, dead, oldBranches, ctx) {
       k = 2;
     }
     leaf.onload = () => {
-      ctx.drawImage(leaf, oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress], 10 * k, 10 * k);
+      ctx.drawImage(
+        leaf,
+        Math.floor(oldBranches.oldBranchesX[progress]),
+        Math.floor(oldBranches.oldBranchesY[progress]),
+        10 * k,
+        10 * k
+      );
     };
   }
 }
@@ -373,7 +374,7 @@ function drawProgressBar(painted, sum, ctx) {
   let p2 = painted / sum;
   ctx.fillStyle = '#4FB39A';
   ctx.strokeStyle = '#4FB39A';
-  ctx.rect(window.innerWidth * p1, 0, window.innerWidth * p2, window.innerHeight * 0.02);
+  ctx.rect(Math.floor(window.innerWidth * p1), 0, window.innerWidth * p2, 3);
   ctx.fill();
   ctx.stroke();
 }
