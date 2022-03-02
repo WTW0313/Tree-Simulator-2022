@@ -1,6 +1,15 @@
 import '@/styles/main.scss';
 import { createCanvas } from '@/js/canvas';
-import { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree } from '@/js/tree';
+import {
+  BranchCollection,
+  DieBranches,
+  initialBranch,
+  pointsGenerator,
+  drawTree,
+  drawTreeWithoutAnimation
+} from '@/js/tree';
+
+import { animation } from './js/config';
 
 // Branches
 const branches = new BranchCollection();
@@ -28,5 +37,9 @@ function init() {
   // Draw the tree
   const ctxTrunk = trunkCanvas.getContext('2d');
   const ctxLeaf = leafCanvas.getContext('2d');
-  drawTree(0, 0, oldBranches, ctxTrunk, ctxLeaf);
+  if (animation) {
+    drawTree(0, 0, oldBranches, ctxTrunk, ctxLeaf);
+  } else {
+    drawTreeWithoutAnimation(0, 0, oldBranches, ctxTrunk, ctxLeaf);
+  }
 }

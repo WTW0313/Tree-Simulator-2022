@@ -267,7 +267,7 @@ function pointsGenerator(oldBranches, branches) {
  * @param {CanvasRenderingContext2D} ctxLeaf
  */
 function drawTree(progress, cnt, oldBranches, ctxTrunk, ctxLeaf) {
-  const dead = 5;
+  const dead = 20;
   const animationTree = () => {
     if (oldBranches.oldBranchesTag[progress] === 'trunk') {
       drawTrunk(progress, oldBranches, ctxTrunk);
@@ -281,6 +281,28 @@ function drawTree(progress, cnt, oldBranches, ctxTrunk, ctxLeaf) {
     }
   };
   requestAnimationFrame(animationTree);
+}
+
+/**
+ * Draw the tree.
+ * @function
+ * @param {number} progress The number of points painted
+ * @param {number} cnt The number of leaf points painted
+ * @param {DieBranches} oldBranches
+ * @param {CanvasRenderingContext2D} ctxTrunk
+ * @param {CanvasRenderingContext2D} ctxLeaf
+ */
+function drawTreeWithoutAnimation(progress, cnt, oldBranches, ctxTrunk, ctxLeaf) {
+  const dead = 20;
+  while (progress < oldBranches.oldBranchesX.length) {
+    if (oldBranches.oldBranchesTag[progress] === 'trunk') {
+      drawTrunk(progress, oldBranches, ctxTrunk);
+    } else if (oldBranches.oldBranchesTag[progress] === 'leaf') {
+      drawLeaf(progress, cnt, dead, oldBranches, ctxLeaf);
+      cnt++;
+    }
+    progress = progress + 1;
+  }
 }
 
 /**
@@ -321,11 +343,11 @@ function drawLeaf(progress, cnt, dead, oldBranches, ctx) {
       leaf.src = leaf_1;
       k = 1;
     } else if (p < 2) {
-      oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 20;
+      oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 10;
       leaf.src = leaf_2;
       k = 2;
     } else if (p < 3) {
-      oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 10;
+      oldBranches.oldBranchesX[progress] = oldBranches.oldBranchesX[progress] - 5;
       leaf.src = leaf_1;
       k = 2;
     }
@@ -335,4 +357,4 @@ function drawLeaf(progress, cnt, dead, oldBranches, ctx) {
   }
 }
 
-export { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree };
+export { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree, drawTreeWithoutAnimation };
