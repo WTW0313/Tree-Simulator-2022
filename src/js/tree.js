@@ -265,9 +265,11 @@ function pointsGenerator(oldBranches, branches) {
  * @param {DieBranches} oldBranches
  * @param {CanvasRenderingContext2D} ctxTrunk
  * @param {CanvasRenderingContext2D} ctxLeaf
+ * @param {CanvasRenderingContext2D} ctxProgressBar
  */
-function drawTree(progress, cnt, oldBranches, ctxTrunk, ctxLeaf) {
+function drawTree(progress, cnt, oldBranches, ctxTrunk, ctxLeaf, ctxProgressBar) {
   const dead = 20;
+  let animationID = 0;
   const animationTree = () => {
     if (oldBranches.oldBranchesTag[progress] === 'trunk') {
       drawTrunk(progress, oldBranches, ctxTrunk);
@@ -275,12 +277,15 @@ function drawTree(progress, cnt, oldBranches, ctxTrunk, ctxLeaf) {
       drawLeaf(progress, cnt, dead, oldBranches, ctxLeaf);
       cnt++;
     }
-    progress = progress + 1;
+    progress++;
+    drawProgressBar(progress, oldBranches.oldBranchesX.length, ctxProgressBar);
     if (progress !== oldBranches.oldBranchesX.length) {
       requestAnimationFrame(animationTree);
+    } else {
+      cancelAnimationFrame(animationID);
     }
   };
-  requestAnimationFrame(animationTree);
+  animationID = requestAnimationFrame(animationTree);
 }
 
 /**
@@ -301,7 +306,7 @@ function drawTreeWithoutAnimation(progress, cnt, oldBranches, ctxTrunk, ctxLeaf)
       drawLeaf(progress, cnt, dead, oldBranches, ctxLeaf);
       cnt++;
     }
-    progress = progress + 1;
+    progress++;
   }
 }
 
@@ -355,6 +360,22 @@ function drawLeaf(progress, cnt, dead, oldBranches, ctx) {
       ctx.drawImage(leaf, oldBranches.oldBranchesX[progress], oldBranches.oldBranchesY[progress], 10 * k, 10 * k);
     };
   }
+}
+
+/**
+ * @description Draw the loadingbar.
+ * @param {number} painted The points that have been painted
+ * @param {number} sum The total number of points
+ * @param {CanvasRenderingContext2D} ctx
+ */
+function drawProgressBar(painted, sum, ctx) {
+  let p1 = (painted - 1) / sum;
+  let p2 = painted / sum;
+  ctx.fillStyle = '#4FB39A';
+  ctx.strokeStyle = '#4FB39A';
+  ctx.rect(window.innerWidth * p1, 0, window.innerWidth * p2, window.innerHeight * 0.02);
+  ctx.fill();
+  ctx.stroke();
 }
 
 export { BranchCollection, DieBranches, initialBranch, pointsGenerator, drawTree, drawTreeWithoutAnimation };

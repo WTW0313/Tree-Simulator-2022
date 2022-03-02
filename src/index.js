@@ -16,7 +16,7 @@ const branches = new BranchCollection();
 const oldBranches = new DieBranches();
 
 // Canvases
-let trunkCanvas, leafCanvas;
+let trunkCanvas, leafCanvas, progressBarCanvas;
 
 window.addEventListener('load', init);
 
@@ -29,6 +29,7 @@ function init() {
   // Create Canvases
   trunkCanvas = createCanvas(window.innerWidth, window.innerHeight, app, 'trunk-canvas');
   leafCanvas = createCanvas(window.innerWidth, window.innerHeight, app, 'leaf-canvas');
+  progressBarCanvas = createCanvas(window.innerWidth, window.innerHeight, app, 'progress-bar-canvas');
 
   // Initiate tree points
   initialBranch(branches, trunkCanvas);
@@ -37,8 +38,9 @@ function init() {
   // Draw the tree
   const ctxTrunk = trunkCanvas.getContext('2d');
   const ctxLeaf = leafCanvas.getContext('2d');
+  const ctxProgressBar = progressBarCanvas.getContext('2d');
   if (animation) {
-    drawTree(0, 0, oldBranches, ctxTrunk, ctxLeaf);
+    drawTree(0, 0, oldBranches, ctxTrunk, ctxLeaf, ctxProgressBar);
   } else {
     drawTreeWithoutAnimation(0, 0, oldBranches, ctxTrunk, ctxLeaf);
   }
