@@ -9,7 +9,7 @@ import {
   drawTreeWithoutAnimation
 } from '@/js/tree';
 
-import { animation } from './js/config';
+import * as config from './js/config';
 
 // Branches
 const branches = new BranchCollection();
@@ -39,7 +39,7 @@ function init() {
   const ctxTrunk = trunkCanvas.getContext('2d');
   const ctxLeaf = leafCanvas.getContext('2d');
   const ctxProgressBar = progressBarCanvas.getContext('2d');
-  if (animation) {
+  if (config.animation) {
     drawTree(0, 0, oldBranches, ctxTrunk, ctxLeaf, ctxProgressBar);
   } else {
     drawTreeWithoutAnimation(0, 0, oldBranches, ctxTrunk, ctxLeaf);
